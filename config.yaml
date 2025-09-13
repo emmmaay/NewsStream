@@ -9,7 +9,7 @@ ai:
     - "YOUR_GROQ_KEY_3"
     - "YOUR_GROQ_KEY_4"
     - "YOUR_GROQ_KEY_5"
-  model: "mixtral-8x7b-32768"
+  model: "groq/compound"
   max_tokens: 1000
   temperature: 0.7
 

@@ -27,10 +27,10 @@ class AIKeyRotator:
     
     def __init__(self, api_keys: List[str]):
         # Filter out all placeholder keys and empty/invalid keys
-        placeholder_patterns = ["YOUR_GROQ_KEY", "your_api_key", "placeholder", ""]
+        placeholder_patterns = ["YOUR_GROQ_KEY", "your_api_key", "placeholder"]
         self.api_keys = [
             key for key in api_keys 
-            if key and not any(pattern in key for pattern in placeholder_patterns) and len(key) > 10
+            if key and key.strip() and not any(pattern in key for pattern in placeholder_patterns) and len(key) > 10
         ]
         self.current_index = 0
         self.key_status: Dict[str, Dict] = {}
