@@ -146,28 +146,64 @@ class ConfigManager:
         """Get AI configuration including GROQ keys from environment"""
         ai_config = self.config.get('ai', {})
         
-        # Check environment for GROQ key first
-        env_key = os.getenv('GROQ_API_KEY')
-        if env_key and len(env_key.strip()) > 10:
-            # Add environment key to primary_keys if not already there
-            primary_keys = ai_config.setdefault('primary_keys', [])
-            if env_key not in primary_keys:
-                primary_keys.append(env_key)
-                logger.info("✅ GROQ API key loaded from environment")
+        # Load all GROQ API keys from environment
+        env_keys = []
+        for key_name in ['GROQ_API_KEY', 'GROQ_API_KEY_2', 'GROQ_API_KEY_3', 'GROQ_API_KEY_4', 'GROQ_API_KEY_5']:
+            env_key = os.getenv(key_name)
+            if env_key and len(env_key.strip()) > 10 and not env_key.startswith('your_'):
+                env_keys.append(env_key)
+        
+        if env_keys:
+            # Replace config keys with environment keys
+            ai_config['primary_keys'] = env_keys
+            logger.info(f"✅ Loaded {len(env_keys)} GROQ API keys from environment")
         
         return ai_config
     
     def get_twitter_config(self) -> Dict[str, Any]:
-        """Get Twitter configuration"""
-        return self.config.get('twitter', {})
+        """Get Twitter configuration with environment variables"""
+        twitter_config = self.config.get('twitter', {}).copy()
+        
+        # Load credentials from environment
+        username = os.getenv('TWITTER_USERNAME')
+        password = os.getenv('TWITTER_PASSWORD')
+        
+        if username and not username.startswith('your_'):
+            twitter_config['username'] = username
+        if password and not password.startswith('your_'):
+            twitter_config['password'] = password
+            
+        return twitter_config
     
     def get_facebook_config(self) -> Dict[str, Any]:
-        """Get Facebook configuration"""
-        return self.config.get('facebook', {})
+        """Get Facebook configuration with environment variables"""
+        facebook_config = self.config.get('facebook', {}).copy()
+        
+        # Load credentials from environment
+        access_token = os.getenv('FACEBOOK_ACCESS_TOKEN')
+        page_id = os.getenv('FACEBOOK_PAGE_ID')
+        
+        if access_token and not access_token.startswith('your_'):
+            facebook_config['access_token'] = access_token
+        if page_id and not page_id.startswith('your_'):
+            facebook_config['page_id'] = page_id
+            
+        return facebook_config
     
     def get_telegram_config(self) -> Dict[str, Any]:
-        """Get Telegram configuration"""
-        return self.config.get('telegram', {})
+        """Get Telegram configuration with environment variables"""
+        telegram_config = self.config.get('telegram', {}).copy()
+        
+        # Load credentials from environment
+        bot_token = os.getenv('TELEGRAM_BOT_TOKEN')
+        channel_id = os.getenv('TELEGRAM_CHANNEL_ID')
+        
+        if bot_token and not bot_token.startswith('your_'):
+            telegram_config['bot_token'] = bot_token
+        if channel_id and not channel_id.startswith('your_'):
+            telegram_config['channel_id'] = channel_id
+            
+        return telegram_config
     
     def get_news_sources_config(self) -> Dict[str, Any]:
         """Get news sources configuration"""
