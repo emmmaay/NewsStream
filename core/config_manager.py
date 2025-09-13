@@ -105,10 +105,15 @@ class ConfigManager:
             if key and not any(pattern in key for pattern in placeholder_patterns) and len(key) > 20
         ]
         
+        # Also check environment variable for GROQ key
+        env_key = os.getenv('GROQ_API_KEY')
+        if env_key and len(env_key.strip()) > 10:
+            valid_keys.append(env_key)
+        
         if not valid_keys:
-            logger.warning("AI keys not configured - using placeholder values")
+            logger.warning("❌ AI keys not configured - system will use fallback processing")
         else:
-            logger.info(f"Found {len(valid_keys)} valid AI keys")
+            logger.info(f"✅ Found {len(valid_keys)} valid AI keys")
             
         logger.info("Configuration validation completed successfully")
     
@@ -138,8 +143,19 @@ class ConfigManager:
         logger.info("Platform limits initialized successfully")
     
     def get_ai_config(self) -> Dict[str, Any]:
-        """Get AI configuration with key rotation"""
-        return self.config.get('ai', {})
+        """Get AI configuration including GROQ keys from environment"""
+        ai_config = self.config.get('ai', {})
+        
+        # Check environment for GROQ key first
+        env_key = os.getenv('GROQ_API_KEY')
+        if env_key and len(env_key.strip()) > 10:
+            # Add environment key to primary_keys if not already there
+            primary_keys = ai_config.setdefault('primary_keys', [])
+            if env_key not in primary_keys:
+                primary_keys.append(env_key)
+                logger.info("✅ GROQ API key loaded from environment")
+        
+        return ai_config
     
     def get_twitter_config(self) -> Dict[str, Any]:
         """Get Twitter configuration"""

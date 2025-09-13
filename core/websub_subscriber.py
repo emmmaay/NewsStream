@@ -396,6 +396,7 @@ class WebSubSubscriber:
                     logger.debug(f"Polled {feeds_to_poll} feeds via fallback RSS")
                 
                 # Poll every 10 minutes as fallback (with some jitter)
+                import random
                 await asyncio.sleep(600 + random.randint(0, 120))
                 
         except Exception as e:

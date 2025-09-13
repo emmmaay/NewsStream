@@ -7,6 +7,7 @@ Handles content processing, enhancement, and intelligent response generation
 import asyncio
 import logging
 import random
+import os
 from typing import Dict, List, Optional, Any, Tuple
 from datetime import datetime, timedelta
 import hashlib
@@ -26,10 +27,10 @@ class AIKeyRotator:
     
     def __init__(self, api_keys: List[str]):
         # Filter out all placeholder keys and empty/invalid keys
-        placeholder_patterns = ["YOUR_GROQ_KEY", "GROQ_API_KEY", "your_api_key", ""]
+        placeholder_patterns = ["YOUR_GROQ_KEY", "your_api_key", "placeholder", ""]
         self.api_keys = [
             key for key in api_keys 
-            if key and not any(pattern in key for pattern in placeholder_patterns) and len(key) > 20
+            if key and not any(pattern in key for pattern in placeholder_patterns) and len(key) > 10
         ]
         self.current_index = 0
         self.key_status: Dict[str, Dict] = {}
@@ -147,8 +148,11 @@ class AIProcessor:
         self.config = config_manager
         self.ai_config = config_manager.get_ai_config()
         
+        # Load API keys from environment and config
+        api_keys = self._load_api_keys()
+        
         # Initialize key rotator
-        self.key_rotator = AIKeyRotator(self.ai_config.get('primary_keys', []))
+        self.key_rotator = AIKeyRotator(api_keys)
         
         # AI settings
         self.model = self.ai_config.get('model', 'mixtral-8x7b-32768')
@@ -165,6 +169,38 @@ class AIProcessor:
         except Exception as e:
             logger.warning(f"Could not initialize tokenizer: {e}")
             self.tokenizer = None
+    
+    def _load_api_keys(self) -> List[str]:
+        """Load and validate GROQ API keys from environment and config"""
+        keys = []
+        
+        # First try environment variable
+        env_key = os.getenv('GROQ_API_KEY')
+        if env_key and len(env_key.strip()) > 10:  
+            cleaned_key = env_key.strip()
+            # Filter out placeholder patterns
+            placeholder_patterns = ['YOUR_GROQ_KEY', 'your_api_key', 'placeholder']
+            if cleaned_key not in placeholder_patterns:
+                keys.append(cleaned_key)
+                logger.info("✅ GROQ API key loaded from environment")
+        
+        # Then try config file keys
+        config_keys = self.ai_config.get('primary_keys', [])
+        for key in config_keys:
+            if key and len(key.strip()) > 10 and key.strip() not in keys:
+                cleaned_key = key.strip()
+                # Filter out placeholder patterns
+                placeholder_patterns = ['YOUR_GROQ_KEY', 'your_api_key', 'placeholder']
+                if cleaned_key not in placeholder_patterns:
+                    keys.append(cleaned_key)
+        
+        if not keys:
+            logger.warning("❌ No valid GROQ API keys found - AI features will be disabled")
+            logger.info("🔧 Add your GROQ API key to fix this: export GROQ_API_KEY=your_actual_key")
+        else:
+            logger.info(f"✅ Loaded {len(keys)} valid GROQ API key(s) - AI enhancement active")
+            
+        return keys
     
     async def enhance_content(self, original_content: str, topic: str = "") -> Optional[str]:
         """Enhance news content to make it more engaging"""
