@@ -1,0 +1,196 @@
+# Automated News Bot Configuration
+# ========================================
+
+# AI Configuration (GROQ)
+ai:
+  primary_keys:
+    - "YOUR_GROQ_KEY_1"
+    - "YOUR_GROQ_KEY_2"
+    - "YOUR_GROQ_KEY_3"
+    - "YOUR_GROQ_KEY_4"
+    - "YOUR_GROQ_KEY_5"
+  model: "mixtral-8x7b-32768"
+  max_tokens: 1000
+  temperature: 0.7
+
+# News Sources (WebSub enabled)
+news_sources:
+  google_news:
+    enabled: true
+    topics:
+      - "artificial intelligence"
+      - "machine learning"
+      - "cloud computing"
+      - "cybersecurity"
+      - "blockchain"
+      - "cryptocurrency"
+      - "data science"
+      - "deep learning"
+      - "neural networks"
+      - "automation"
+      - "robotics"
+      - "quantum computing"
+      - "edge computing"
+      - "5G technology"
+      - "IoT"
+      - "augmented reality"
+      - "virtual reality"
+      - "fintech"
+      - "big data"
+      - "software development"
+    base_url: "https://news.google.com/rss/search"
+    websub_hub: "https://pubsubhubbub.appspot.com/"
+    
+  techcrunch:
+    enabled: true
+    rss_url: "https://techcrunch.com/feed/"
+    websub_hub: "https://pubsubhubbub.appspot.com/"
+    
+  additional_sources:
+    - name: "Ars Technica"
+      rss_url: "https://feeds.arstechnica.com/arstechnica/index"
+      websub_hub: "https://pubsubhubbub.appspot.com/"
+    - name: "The Verge"
+      rss_url: "https://www.theverge.com/rss/index.xml"
+      websub_hub: "https://pubsubhubbub.appspot.com/"
+    - name: "Wired"
+      rss_url: "https://www.wired.com/feed"
+      websub_hub: "https://pubsubhubbub.appspot.com/"
+
+# Twitter Configuration
+twitter:
+  account:
+    username: "YOUR_TWITTER_USERNAME"
+    email: "YOUR_TWITTER_EMAIL"
+    password: "YOUR_TWITTER_PASSWORD"
+  
+  limits:
+    max_posts_per_day: 50
+    max_likes_per_day: 100
+    max_retweets_per_day: 30
+    max_replies_per_day: 25
+    character_limit: 280  # Change to 25000 for premium
+    thread_enabled: true
+    
+  engagement:
+    target_usernames:
+      - "elonmusk"
+      - "sundarpichai"
+      - "satyanadella"
+      - "jeffdean"
+      - "AndrewYNg"
+    
+    keywords_to_like:
+      - "AI"
+      - "artificial intelligence"
+      - "machine learning"
+      - "ML"
+      - "deep learning"
+      - "neural network"
+      - "automation"
+      - "robotics"
+      - "blockchain"
+      - "cryptocurrency"
+      - "quantum computing"
+      - "cloud computing"
+      - "cybersecurity"
+      - "data science"
+      - "big data"
+      - "IoT"
+      - "5G"
+      - "augmented reality"
+      - "virtual reality"
+      - "fintech"
+      - "innovation"
+      - "technology"
+      - "startup"
+      - "tech news"
+      
+  behavior:
+    human_delays:
+      min_scroll_delay: 2.0
+      max_scroll_delay: 8.0
+      min_typing_delay: 0.1
+      max_typing_delay: 0.4
+      min_action_delay: 3.0
+      max_action_delay: 12.0
+      refresh_interval: 300  # 5 minutes
+    
+    scroll_patterns:
+      enabled: true
+      scroll_distance: 500
+      pause_probability: 0.3
+
+# Facebook Configuration
+facebook:
+  page_access_token: "YOUR_FACEBOOK_PAGE_TOKEN"
+  page_id: "YOUR_FACEBOOK_PAGE_ID"
+  limits:
+    max_posts_per_day: 10
+  image_enabled: true
+
+# Telegram Configuration  
+telegram:
+  bot_token: "YOUR_TELEGRAM_BOT_TOKEN"
+  channel_id: "YOUR_TELEGRAM_CHANNEL_ID"
+  limits:
+    max_posts_per_day: 100
+  image_enabled: true
+
+# Content Processing
+content:
+  sentiment_analysis: true
+  quality_threshold: 0.7
+  min_word_count: 50
+  max_word_count: 2000
+  
+  hashtags:
+    ai_related: ["#AI", "#MachineLearning", "#TechNews", "#Innovation"]
+    blockchain: ["#Blockchain", "#Crypto", "#DeFi", "#Web3"]
+    cloud: ["#Cloud", "#AWS", "#Azure", "#GCP"]
+    security: ["#Cybersecurity", "#InfoSec", "#DataProtection"]
+    general: ["#Technology", "#Tech", "#Future", "#Digital"]
+    max_hashtags: 3
+
+# Deduplication Settings
+deduplication:
+  similarity_threshold: 0.8
+  content_hash_enabled: true
+  semantic_analysis: true
+  time_window_hours: 24
+
+# Database Configuration
+database:
+  redis:
+    host: "localhost"
+    port: 6379
+    db: 0
+    password: null
+  
+  postgresql:
+    host: "localhost"
+    port: 5432
+    database: "news_automation"
+    username: "postgres"
+    password: "password"
+
+# WebSub Server Configuration
+websub:
+  host: "0.0.0.0"
+  port: 8000
+  callback_url_base: "YOUR_SERVER_URL"
+  verify_token: "YOUR_WEBSUB_VERIFY_TOKEN"
+
+# Error Handling & Monitoring
+error_handling:
+  max_retries: 3
+  retry_delay: 5
+  emergency_stop_enabled: true
+  log_level: "INFO"
+  alert_on_failures: true
+
+# Scheduling
+scheduling:
+  content_processing_interval: 60  # seconds
+  engagement_check_interval: 300   # 5 minutes
+  daily_limit_reset: "00:00"      # midnight UTC
